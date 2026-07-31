@@ -1,0 +1,345 @@
+/* ==========================================================================
+   Fairmind Research Tools — shared stylesheet
+   Both pages load this file, so a change here updates the whole site.
+   --------------------------------------------------------------------------
+   Colours are estimated from the Fairmind site. To get them exact:
+   open fairmind.co.uk, right-click the blue nav bar > Inspect, and read the
+   background-color value. Paste it in below. Same for the pink button.
+   ========================================================================== */
+
+:root {
+  /* Brand */
+  --blue:       #c5d8de;   /* nav bar */
+  --blue-deep:  #bcd2d9;   /* page title band */
+  --pink:       #ef4b63;   /* active nav, buttons */
+  --pink-deep:  #d93b52;   /* button hover */
+
+  /* Neutrals */
+  --ink:        #1c1c1c;
+  --ink-soft:   #6b6b6b;
+  --line:       #e4e4e4;
+  --paper:      #ffffff;
+  --wash:       #f7f8f8;
+
+  /* Type */
+  --font: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+
+  --wide:   .18em;   /* wordmark tracking */
+  --medium: .12em;   /* nav and headings */
+  --narrow: .02em;   /* body text */
+}
+
+/* --- base ---------------------------------------------------------------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.7;
+  letter-spacing: var(--narrow);
+}
+
+a { color: var(--pink); }
+
+.wrap { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* --- masthead ------------------------------------------------------------ */
+.masthead { text-align: center; padding: 2.5rem 1.5rem 2rem; }
+
+.wordmark {
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 200;
+  letter-spacing: var(--wide);
+  margin: 0;
+  line-height: 1;
+}
+
+.tagline {
+  margin: .75rem 0 0;
+  font-size: clamp(.75rem, 2vw, .95rem);
+  font-weight: 300;
+  letter-spacing: var(--medium);
+  color: var(--ink);
+}
+
+/* --- nav ----------------------------------------------------------------- */
+.nav {
+  background: var(--blue);
+  border-bottom: 3px solid var(--paper);
+}
+.nav ul {
+  list-style: none;
+  margin: 0 auto;
+  padding: 1.1rem 1.5rem;
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+.nav a {
+  color: var(--ink);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: .78rem;
+  font-weight: 400;
+  letter-spacing: var(--medium);
+}
+.nav a:hover { color: var(--pink); }
+.nav a[aria-current="page"] { color: var(--pink); }
+
+/* --- page title band ----------------------------------------------------- */
+.band {
+  background: var(--blue-deep);
+  text-align: center;
+  padding: 2.25rem 1.5rem;
+}
+.band h1 {
+  margin: 0;
+  font-size: clamp(1.25rem, 4vw, 1.9rem);
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+}
+
+/* --- content ------------------------------------------------------------- */
+main { padding: 3rem 0 4rem; }
+
+.lead {
+  max-width: 640px;
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+.lead p { margin: 0 0 1rem; }
+.lead p:last-child { margin-bottom: 0; }
+
+h2 {
+  font-weight: 300;
+  font-size: 1.35rem;
+  letter-spacing: var(--narrow);
+  margin: 0 0 1.25rem;
+}
+
+.section-heading {
+  font-weight: 400;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--ink-soft);
+  margin: 0 0 1.25rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.muted { color: var(--ink-soft); font-size: .85rem; }
+.centre { text-align: center; }
+
+/* --- tool cards (homepage) ------------------------------------------------ */
+.tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+.tool {
+  border: 1px solid var(--line);
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+}
+.tool h3 {
+  margin: 0 0 .75rem;
+  font-weight: 400;
+  font-size: 1.05rem;
+  letter-spacing: var(--narrow);
+}
+.tool p { margin: 0 0 1.75rem; color: var(--ink-soft); font-size: .88rem; }
+.tool .btn { margin-top: auto; align-self: flex-start; }
+.tool.soon { background: var(--wash); }
+.tool.soon h3, .tool.soon p { color: var(--ink-soft); }
+
+.pill {
+  display: inline-block;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  padding: .15rem .5rem;
+  margin-bottom: 1rem;
+}
+
+/* --- buttons ------------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  font-family: var(--font);
+  font-size: .75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  text-decoration: none;
+  padding: .85rem 1.75rem;
+  border: 1px solid var(--pink);
+  background: var(--pink);
+  color: #fff;
+  cursor: pointer;
+}
+.btn:hover { background: var(--pink-deep); border-color: var(--pink-deep); }
+
+.btn.outline { background: none; color: var(--pink); }
+.btn.outline:hover { background: var(--wash); color: var(--pink-deep); }
+
+.btn:disabled,
+.btn.disabled {
+  background: var(--line);
+  border-color: var(--line);
+  color: var(--ink-soft);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* --- forms --------------------------------------------------------------- */
+.card {
+  border: 1px solid var(--line);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1.25rem;
+}
+
+label {
+  display: block;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--ink-soft);
+  margin-bottom: .45rem;
+}
+
+input, select {
+  width: 100%;
+  padding: .6rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: .92rem;
+  font-weight: 300;
+}
+input:focus, select:focus {
+  outline: 2px solid var(--pink);
+  outline-offset: 1px;
+}
+
+.actions { margin-top: 1.75rem; display: flex; gap: .75rem; flex-wrap: wrap; }
+
+/* --- source links -------------------------------------------------------- */
+.sources { list-style: none; padding: 0; margin: 0; }
+.sources li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: .8rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.sources li:last-child { border-bottom: 0; }
+.sources a {
+  font-weight: 400;
+  text-decoration: none;
+  letter-spacing: var(--narrow);
+}
+.sources a:hover { text-decoration: underline; }
+
+/* --- table --------------------------------------------------------------- */
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th {
+  text-align: left;
+  font-size: .66rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--ink-soft);
+  font-weight: 500;
+  padding: .5rem .5rem;
+  border-bottom: 1px solid var(--line);
+}
+td {
+  padding: .7rem .5rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.outlier td { background: #fdf4f5; }
+
+.tag {
+  display: inline-block;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--pink);
+  border: 1px solid var(--pink);
+  padding: 0 .35rem;
+}
+
+.del {
+  background: none;
+  border: 0;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 0 .3rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.del:hover { color: var(--pink); }
+
+/* --- summary ------------------------------------------------------------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.stat { border-left: 2px solid var(--blue); padding-left: 1rem; }
+.stat .k {
+  font-size: .66rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--ink-soft);
+}
+.stat .v { font-size: 1.3rem; font-weight: 300; font-variant-numeric: tabular-nums; }
+
+.empty { color: var(--ink-soft); font-style: italic; }
+
+.caveat {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--wash);
+  border-left: 2px solid var(--blue);
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+
+/* --- footer -------------------------------------------------------------- */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem 1.5rem 3rem;
+  text-align: center;
+  font-size: .78rem;
+  color: var(--ink-soft);
+  letter-spacing: var(--narrow);
+}
+footer p { margin: 0 0 .4rem; }
+
+/* --- accessibility floor -------------------------------------------------- */
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
