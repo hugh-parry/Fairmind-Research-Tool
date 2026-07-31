@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fairmind — Watch Market Research</title>
+
+<style>
+/* ==========================================================================
+   1. DESIGN TOKENS  —  SWAP THESE FOR FAIRMIND'S REAL VALUES
+   Open fairmind.co.uk, right-click > Inspect, and read the colours and
+   font-family off the live stylesheet. Change them here only; every
+   rule below refers to these variables, so nothing else needs editing.
+   ========================================================================== */
+:root {
+  --ink:        #23272e;   /* main text */
+  --ink-soft:   #5c636e;   /* secondary text */
+  --line:       #dcdcd6;   /* borders and rules */
+  --paper:      #ffffff;   /* card background */
+  --wash:       #f6f5f2;   /* page background */
+  --accent:     #8a6f43;   /* buttons, links, highlights */
+  --accent-dk:  #6b5634;   /* accent, pressed state */
+  --flag:       #a8442a;   /* outlier warning */
+
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body:    system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
+  --font-data:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --radius: 3px;
+  --gap: 1.25rem;
+}
+
+/* --- base ---------------------------------------------------------------- */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 2rem 1.25rem 5rem;
+  background: var(--wash);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.wrap { max-width: 940px; margin: 0 auto; }
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  margin: 0 0 .25rem;
+}
+.sub { color: var(--ink-soft); margin: 0 0 2rem; font-size: .9rem; }
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.15rem;
+  margin: 0 0 1rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: var(--gap);
+}
+
+/* --- form ---------------------------------------------------------------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+label { display: block; font-size: .78rem; letter-spacing: .04em;
+        text-transform: uppercase; color: var(--ink-soft); margin-bottom: .3rem; }
+input, select {
+  width: 100%;
+  padding: .5rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font: inherit;
+  background: var(--paper);
+  color: var(--ink);
+}
+input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+button {
+  font: inherit;
+  padding: .55rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+button:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
+button.ghost { background: none; color: var(--accent); }
+button.ghost:hover { background: var(--wash); }
+.actions { margin-top: 1.25rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+
+/* --- source links -------------------------------------------------------- */
+.sources { list-style: none; padding: 0; margin: 0; }
+.sources li {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; padding: .6rem 0; border-bottom: 1px solid var(--line);
+}
+.sources li:last-child { border-bottom: 0; }
+.sources a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.sources a:hover { text-decoration: underline; }
+.note { font-size: .8rem; color: var(--ink-soft); }
+
+/* --- table --------------------------------------------------------------- */
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th {
+  text-align: left; font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--ink-soft); font-weight: 600;
+  padding: .4rem .5rem; border-bottom: 1px solid var(--line);
+}
+td { padding: .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.num { font-family: var(--font-data); text-align: right; white-space: nowrap; }
+tr.outlier td { background: #fdf6f4; }
+.tag {
+  display: inline-block; font-size: .68rem; text-transform: uppercase;
+  letter-spacing: .05em; color: var(--flag); border: 1px solid var(--flag);
+  border-radius: 2px; padding: 0 .3rem;
+}
+.del { background: none; border: 0; color: var(--ink-soft); cursor: pointer;
+       padding: 0 .3rem; font-size: 1rem; }
+.del:hover { color: var(--flag); }
+
+/* --- summary ------------------------------------------------------------- */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+         gap: 1rem; margin-bottom: 1rem; }
+.stat { border-left: 2px solid var(--accent); padding-left: .75rem; }
+.stat .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em;
+           color: var(--ink-soft); }
+.stat .v { font-family: var(--font-data); font-size: 1.3rem; }
+.empty { color: var(--ink-soft); font-style: italic; }
+.caveat {
+  margin-top: 1rem; padding: .75rem 1rem; background: var(--wash);
+  border-left: 2px solid var(--line); font-size: .82rem; color: var(--ink-soft);
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <h1>Watch market research</h1>
+  <p class="sub">Gathers current asking prices from live listings as a starting point for research. Not a valuation.</p>
+
+  <!-- ===== 1. THE PIECE ===== -->
+  <section class="card">
+    <h2>1 &nbsp;The piece</h2>
+    <div class="grid">
+      <div><label for="brand">Brand</label><input id="brand" placeholder="Rolex"></div>
+      <div><label for="model">Model</label><input id="model" placeholder="Submariner Date"></div>
+      <div><label for="ref">Reference no.</label><input id="ref" placeholder="116610LN"></div>
+      <div><label for="year">Year of manufacture</label><input id="year" placeholder="2015"></div>
+      <div><label for="material">Case material</label><input id="material" placeholder="Stainless steel"></div>
+      <div>
+        <label for="papers">Box &amp; papers</label>
+        <select id="papers">
+          <option value="">Not specified</option>
+          <option>Full set</option>
+          <option>Box only</option>
+          <option>Papers only</option>
+          <option>Watch only</option>
+        </select>
+      </div>
+      <div>
+        <label for="country">Market / country</label>
+        <select id="country">
+          <option value="UK">United Kingdom</option>
+          <option value="EU">Europe</option>
+          <option value="US">United States</option>
+          <option value="ANY">Any</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <button onclick="buildSearches()">Build search links</button>
+      <button class="ghost" onclick="location.reload()">Clear all</button>
+    </div>
+  </section>
+
+  <!-- ===== 2. SEARCH LINKS ===== -->
+  <section class="card">
+    <h2>2 &nbsp;Open the sources</h2>
+    <ul class="sources" id="sourceList">
+      <li class="empty">Enter the piece above, then build the links.</li>
+    </ul>
+    <p class="note" style="margin-top:1rem">
+      Each link opens that site's own search, already filtered. Read the listings there,
+      then record the ones that are close enough below.
+    </p>
+  </section>
+
+  <!-- ===== 3. RECORD LISTINGS ===== -->
+  <section class="card">
+    <h2>3 &nbsp;Record what you found</h2>
+    <div class="grid">
+      <div>
+        <label for="lSource">Source</label>
+        <select id="lSource"></select>
+      </div>
+      <div><label for="lPrice">Asking price</label><input id="lPrice" type="number" step="0.01" placeholder="8950"></div>
+      <div>
+        <label for="lCur">Currency</label>
+        <select id="lCur">
+          <option>GBP</option><option>EUR</option><option>USD</option><option>CHF</option>
+        </select>
+      </div>
+      <div><label for="lYear">Listing year</label><input id="lYear" placeholder="2015"></div>
+      <div><label for="lPapers">Box &amp; papers</label><input id="lPapers" placeholder="Full set"></div>
+      <div><label for="lUrl">Listing URL</label><input id="lUrl" placeholder="https://..."></div>
+    </div>
+    <div class="actions"><button onclick="addListing()">Add listing</button></div>
+
+    <table style="margin-top:1.5rem">
+      <thead>
+        <tr><th>Source</th><th>Year</th><th>Set</th><th>Asking</th><th>In GBP</th><th></th><th></th></tr>
+      </thead>
+      <tbody id="rows">
+        <tr><td colspan="7" class="empty">No listings recorded yet.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== 4. EXCHANGE RATES ===== -->
+  <section class="card">
+    <h2>4 &nbsp;Exchange rates used</h2>
+    <p class="note">Enter the rate you used and where it came from. It is recorded with the search so the figures can be reproduced later.</p>
+    <div class="grid" style="margin-top:1rem">
+      <div><label for="rEUR">EUR &rarr; GBP</label><input id="rEUR" type="number" step="0.0001" value="0.85" onchange="render()"></div>
+      <div><label for="rUSD">USD &rarr; GBP</label><input id="rUSD" type="number" step="0.0001" value="0.79" onchange="render()"></div>
+      <div><label for="rCHF">CHF &rarr; GBP</label><input id="rCHF" type="number" step="0.0001" value="0.88" onchange="render()"></div>
+      <div><label for="rSrc">Rate source</label><input id="rSrc" placeholder="Bank of England, 31/07/2026"></div>
+    </div>
+  </section>
+
+  <!-- ===== 5. SUMMARY ===== -->
+  <section class="card">
+    <h2>5 &nbsp;Summary</h2>
+    <div id="summary"><p class="empty">Record at least three listings to see a summary.</p></div>
+    <div class="actions"><button class="ghost" onclick="exportCSV()">Download research record (CSV)</button></div>
+  </section>
+
+</div>
+
+<script>
+/* ==========================================================================
+   CONFIGURATION — the part you will edit most
+   --------------------------------------------------------------------------
+   Each source needs a function that turns the form values into that site's
+   own search URL. NONE OF THESE ARE VERIFIED. To fix each one:
+     1. Go to the site and run a real search by hand.
+     2. Copy the URL from the address bar.
+     3. Work out which bit is your search text and which bits are filters.
+     4. Rewrite the url() function below to reproduce it.
+   encodeURIComponent() escapes spaces and symbols so the URL stays valid.
+   ========================================================================== */
+const SOURCES = [
+  {
+    name: 'eBay UK',
+    note: 'Verified pattern. Has an official API for later.',
+    url: q => `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q.terms)}`
+  },
+  {
+    name: 'Chrono24',
+    note: 'TODO — verify by running a search on the site.',
+    url: q => `https://www.chrono24.co.uk/search/index.htm?query=${encodeURIComponent(q.terms)}`
+  },
+  {
+    name: 'Watchfinder',
+    note: 'TODO — verify by running a search on the site.',
+    url: q => `https://www.watchfinder.co.uk/search?q=${encodeURIComponent(q.terms)}`
+  },
+  {
+    name: 'Watches of Switzerland',
+    note: 'TODO — verify. Retail only, useful for current RRP.',
+    url: q => `https://www.thewatchesofswitzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
+  }
+];
+
+/* How far from the median a listing must sit before it is flagged. 0.25 = 25%.
+   Flagged listings are excluded from the trimmed mean but still shown. */
+const OUTLIER_THRESHOLD = 0.25;
+
+/* ========================================================================== */
+
+let listings = [];
+
+function piece() {
+  const g = id => document.getElementById(id).value.trim();
+  const p = { brand:g('brand'), model:g('model'), ref:g('ref'), year:g('year'),
+              material:g('material'), papers:g('papers'), country:g('country') };
+  // Reference number is the strongest identifier, so lead with it when present.
+  p.terms = [p.brand, p.model, p.ref].filter(Boolean).join(' ');
+  return p;
+}
+
+function rates() {
+  const n = id => parseFloat(document.getElementById(id).value) || 0;
+  return { GBP: 1, EUR: n('rEUR'), USD: n('rUSD'), CHF: n('rCHF') };
+}
+
+function buildSearches() {
+  const q = piece();
+  const list = document.getElementById('sourceList');
+  const picker = document.getElementById('lSource');
+
+  if (!q.terms) {
+    list.innerHTML = '<li class="empty">Enter at least a brand before building links.</li>';
+    return;
+  }
+
+  list.innerHTML = '';
+  picker.innerHTML = '';
+  SOURCES.forEach(s => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = s.url(q);
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = s.name;
+    const note = document.createElement('span');
+    note.className = 'note';
+    note.textContent = s.note;
+    li.append(a, note);
+    list.appendChild(li);
+
+    const opt = document.createElement('option');
+    opt.textContent = s.name;
+    picker.appendChild(opt);
+  });
+}
+
+function addListing() {
+  const g = id => document.getElementById(id).value.trim();
+  const price = parseFloat(g('lPrice'));
+  if (!price) { alert('Enter the asking price.'); return; }
+
+  listings.push({
+    source: g('lSource') || '—',
+    price: price,
+    currency: g('lCur'),
+    year: g('lYear'),
+    papers: g('lPapers'),
+    url: g('lUrl'),
+    captured: new Date().toISOString()
+  });
+
+  ['lPrice','lYear','lPapers','lUrl'].forEach(id => document.getElementById(id).value = '');
+  render();
+}
+
+function removeListing(i) { listings.splice(i, 1); render(); }
+
+function gbp(l)  { return l.price * (rates()[l.currency] || 0); }
+function money(n){ return '£' + n.toLocaleString('en-GB', {maximumFractionDigits: 0}); }
+
+function median(a) {
+  const s = [...a].sort((x, y) => x - y), m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+function mean(a) { return a.reduce((t, n) => t + n, 0) / a.length; }
+
+function render() {
+  const tbody = document.getElementById('rows');
+  const summary = document.getElementById('summary');
+
+  if (!listings.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">No listings recorded yet.</td></tr>';
+    summary.innerHTML = '<p class="empty">Record at least three listings to see a summary.</p>';
+    return;
+  }
+
+  const values = listings.map(gbp);
+  const med = median(values);
+  const isOutlier = v => Math.abs(v - med) / med > OUTLIER_THRESHOLD;
+
+  tbody.innerHTML = '';
+  listings.forEach((l, i) => {
+    const v = gbp(l);
+    const tr = document.createElement('tr');
+    if (isOutlier(v)) tr.className = 'outlier';
+    tr.innerHTML = `
+      <td>${l.url ? `<a href="${l.url}" target="_blank" rel="noopener">${l.source}</a>` : l.source}</td>
+      <td>${l.year || '—'}</td>
+      <td>${l.papers || '—'}</td>
+      <td class="num">${l.price.toLocaleString('en-GB')} ${l.currency}</td>
+      <td class="num">${money(v)}</td>
+      <td>${isOutlier(v) ? '<span class="tag">outlier</span>' : ''}</td>
+      <td><button class="del" onclick="removeListing(${i})" aria-label="Remove listing">&times;</button></td>`;
+    tbody.appendChild(tr);
+  });
+
+  if (listings.length < 3) {
+    summary.innerHTML = `<p class="empty">Insufficient data — ${listings.length} listing${listings.length === 1 ? '' : 's'} recorded, three needed before an average is shown.</p>`;
+    return;
+  }
+
+  const kept = values.filter(v => !isOutlier(v));
+  const dropped = values.length - kept.length;
+
+  summary.innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="k">Listings</div><div class="v">${values.length}</div></div>
+      <div class="stat"><div class="k">Median</div><div class="v">${money(med)}</div></div>
+      <div class="stat"><div class="k">Mean (all)</div><div class="v">${money(mean(values))}</div></div>
+      <div class="stat"><div class="k">Mean (outliers removed)</div><div class="v">${kept.length ? money(mean(kept)) : '—'}</div></div>
+      <div class="stat"><div class="k">Range</div><div class="v">${money(Math.min(...values))} – ${money(Math.max(...values))}</div></div>
+    </div>
+    ${dropped ? `<p class="note">${dropped} listing${dropped === 1 ? '' : 's'} sat more than ${OUTLIER_THRESHOLD * 100}% from the median and ${dropped === 1 ? 'was' : 'were'} excluded from the trimmed mean.</p>` : ''}
+    <div class="caveat">
+      These are indicative asking prices from live listings on ${new Date().toLocaleDateString('en-GB')}.
+      They are not values, and are not adjusted for condition, provenance, completeness or the purpose of the valuation.
+    </div>`;
+}
+
+function exportCSV() {
+  if (!listings.length) { alert('Nothing to export yet.'); return; }
+  const q = piece();
+  const r = rates();
+  const esc = s => `"${String(s ?? '').replace(/"/g, '""')}"`;
+
+  const lines = [
+    ['Fairmind — watch market research record'],
+    ['Search run', new Date().toLocaleString('en-GB')],
+    ['Brand', q.brand], ['Model', q.model], ['Reference', q.ref],
+    ['Year', q.year], ['Material', q.material], ['Box & papers', q.papers],
+    ['Market', q.country],
+    ['FX rates', `EUR ${r.EUR} / USD ${r.USD} / CHF ${r.CHF}`],
+    ['FX source', document.getElementById('rSrc').value],
+    [],
+    ['Source', 'Asking price', 'Currency', 'Price in GBP', 'Year', 'Box & papers', 'URL', 'Captured']
+  ].map(row => row.map(esc).join(','));
+
+  listings.forEach(l => lines.push([
+    l.source, l.price, l.currency, Math.round(gbp(l)), l.year, l.papers, l.url, l.captured
+  ].map(esc).join(',')));
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `watch-research-${q.brand || 'search'}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
