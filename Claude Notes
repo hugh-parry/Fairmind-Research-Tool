@@ -1,0 +1,77 @@
+# Fairmind Research Tools
+
+Internal tools for Fairmind Jewellery Valuations, Chester. Built by Hugh, summer intern.
+Static site, hosted on GitHub Pages at `hugh-parry.github.io/Fairmind-Research-Tool/`.
+
+## What this is
+
+A set of open-source research tools for jewellery and watch valuers. Currently one tool:
+watch market research, which helps a valuer gather current asking prices for a piece.
+
+**This is a starting point for research, not a valuation.** The tool never produces a
+value, and nothing it outputs goes into a client document unaltered. The valuer's own
+appraisal — inspection, condition, provenance, purpose of valuation — happens separately
+and afterwards. Keep this framing in all copy. Avoid the word "valuation" for anything
+the tool itself does.
+
+## Hard constraint: no automated fetching
+
+Chrono24 and Watchfinder have no public API and their terms of service prohibit
+automated scraping. **Do not add any code that fetches, scrapes, or proxies listing data
+from these sites.** This is a deliberate decision, not an oversight or a gap to fill.
+
+The tool works by:
+1. Building a pre-filtered search URL from the form values (no network request)
+2. The valuer clicks through, reads the real listings themselves
+3. The valuer types the prices back into the tool
+4. The tool does arithmetic and record-keeping on what was entered
+
+If a change would require the page to request data from a listing site, it is out of
+scope — flag it rather than implementing it. The one exception is eBay, which has an
+official Browse API; adding that is permitted but needs an API key and is not yet built.
+
+## Files
+
+- `index.html` — homepage, lists available tools
+- `watch-research.html` — the watch tool (form, search links, entry table, summary, CSV export)
+- `styles.css` — shared stylesheet for both pages
+- `CLAUDE.md` — this file
+
+No build step, no framework, no dependencies beyond Google Fonts. Plain HTML, CSS and
+vanilla JavaScript, deliberately, so it stays maintainable after the internship ends.
+
+## Styling
+
+Matches fairmind.co.uk: thin wide-tracked uppercase wordmark, powder-blue nav bar and
+page-title band, coral pink for buttons and the current nav item, light-weight
+Montserrat on white.
+
+All colours and fonts are CSS variables in `:root` at the top of `styles.css`. Change
+them there only — never hardcode a colour elsewhere in the file.
+
+Current values are estimated from a screenshot and are not yet confirmed against the
+live site. `--blue`, `--pink` and `--font` still need verifying.
+
+## Conventions
+
+- British English throughout (valuation, jewellery, colour, organise)
+- Prices in GBP; FX rates entered manually by the valuer with a stated source, never
+  fetched live, so figures can be reproduced later
+- No localStorage or browser storage — nothing persists between sessions by design.
+  Export the CSV instead.
+- Comments should explain *why*, especially where a constraint above is the reason
+
+## Open work
+
+- [ ] Verify the four search URL patterns in `SOURCES` in `watch-research.html`.
+      Only the eBay one is confirmed; the other three are guesses marked TODO.
+- [ ] Confirm `--blue`, `--pink` and `--font` against the live Fairmind site
+- [ ] Review the outlier rule with Annabell. Currently a flat 25% from the median
+      (`OUTLIER_THRESHOLD`), which is a blunt instrument and hasn't been agreed.
+- [ ] Decide whether the two "coming soon" cards on the homepage stay
+
+## Context to keep in mind
+
+Hugh is an undergraduate, not a professional developer, and needs to be able to explain
+how everything works. Prefer clear, commented, boring code over clever or compact code.
+Explain changes rather than just making them.
