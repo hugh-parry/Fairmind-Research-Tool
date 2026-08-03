@@ -63,11 +63,11 @@ live site. `--blue`, `--pink` and `--font` still need verifying.
 
 ## Open work
 
-- [ ] Verify the four search URL patterns in `SOURCES` in `watch-research.html`.
-      Only the eBay one is confirmed; the other three are guesses marked TODO.
-- [ ] Confirm `--blue`, `--pink` and `--font` against the live Fairmind site
-- [ ] Review the outlier rule with Annabell. Currently a flat 25% from the median
-      (`OUTLIER_THRESHOLD`), which is a blunt instrument and hasn't been agreed.
+- [x] Verify the four search URL patterns in `SOURCES` in `watch-research.html`.
+      All four confirmed (eBay, Chrono24, Watchfinder, Watches of Switzerland).
+- [x] Confirm `--blue`, `--pink` and the wordmark weight against the live Fairmind site
+- [x] Outlier flagging removed — the valuer judges outliers by eye instead. Could be
+      reintroduced later with an agreed rule if that stops being reliable enough.
 - [ ] Decide whether the two "coming soon" cards on the homepage stay
 
 ## Context to keep in mind

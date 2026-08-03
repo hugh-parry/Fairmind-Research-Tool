@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -46,7 +46,6 @@
       <div class="grid">
         <div><label for="brand">Brand</label><input id="brand" placeholder="Rolex"></div>
         <div><label for="model">Model</label><input id="model" placeholder="Submariner Date"></div>
-        <div><label for="ref">Reference no.</label><input id="ref" placeholder="116610LN"></div>
         <div><label for="year">Year of manufacture</label><input id="year" placeholder="2015"></div>
         <div><label for="material">Case material</label><input id="material" placeholder="Stainless steel"></div>
         <div>
@@ -107,10 +106,10 @@
 
       <table style="margin-top:2rem">
         <thead>
-          <tr><th>Source</th><th>Year</th><th>Set</th><th>Asking</th><th>In GBP</th><th></th><th></th></tr>
+          <tr><th>Source</th><th>Year</th><th>Set</th><th>Asking</th><th>In GBP</th><th></th></tr>
         </thead>
         <tbody id="rows">
-          <tr><td colspan="7" class="empty">No listings recorded yet.</td></tr>
+          <tr><td colspan="6" class="empty">No listings recorded yet.</td></tr>
         </tbody>
       </table>
     </section>
@@ -167,24 +166,20 @@ const SOURCES = [
   },
   {
     name: 'Chrono24',
-    note: 'TODO — verify by running a search on the site.',
-    url: q => `https://www.chrono24.co.uk/search/index.htm?query=${encodeURIComponent(q.terms)}`
+    note: 'Verified pattern.',
+    url: q => `https://www.chrono24.co.uk/search/index.htm?dosearch=true&query=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watchfinder',
-    note: 'TODO — verify by running a search on the site.',
+    note: 'Verified pattern.',
     url: q => `https://www.watchfinder.co.uk/search?q=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watches of Switzerland',
-    note: 'TODO — verify. Retail only, useful for current RRP.',
-    url: q => `https://www.thewatchesofswitzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
+    note: 'Verified pattern. Retail only, useful for current RRP.',
+    url: q => `https://www.watches-of-switzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
   }
 ];
-
-/* How far from the median a listing must sit before it is flagged. 0.25 = 25%.
-   Flagged listings are excluded from the trimmed mean but still shown. */
-const OUTLIER_THRESHOLD = 0.25;
 
 /* ========================================================================== */
 
@@ -192,10 +187,9 @@ let listings = [];
 
 function piece() {
   const g = id => document.getElementById(id).value.trim();
-  const p = { brand:g('brand'), model:g('model'), ref:g('ref'), year:g('year'),
+  const p = { brand:g('brand'), model:g('model'), year:g('year'),
               material:g('material'), papers:g('papers'), country:g('country') };
-  // Reference number is the strongest identifier, so it leads the search terms.
-  p.terms = [p.brand, p.model, p.ref].filter(Boolean).join(' ');
+  p.terms = [p.brand, p.model].filter(Boolean).join(' ');
   return p;
 }
 
@@ -270,27 +264,24 @@ function render() {
   const summary = document.getElementById('summary');
 
   if (!listings.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">No listings recorded yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No listings recorded yet.</td></tr>';
     summary.innerHTML = '<p class="empty">Record at least three listings to see a summary.</p>';
     return;
   }
 
   const values = listings.map(gbp);
   const med = median(values);
-  const isOutlier = v => Math.abs(v - med) / med > OUTLIER_THRESHOLD;
 
   tbody.innerHTML = '';
   listings.forEach((l, i) => {
     const v = gbp(l);
     const tr = document.createElement('tr');
-    if (isOutlier(v)) tr.className = 'outlier';
     tr.innerHTML = `
       <td>${l.url ? `<a href="${l.url}" target="_blank" rel="noopener">${l.source}</a>` : l.source}</td>
       <td>${l.year || '—'}</td>
       <td>${l.papers || '—'}</td>
       <td class="num">${l.price.toLocaleString('en-GB')} ${l.currency}</td>
       <td class="num">${money(v)}</td>
-      <td>${isOutlier(v) ? '<span class="tag">outlier</span>' : ''}</td>
       <td><button class="del" onclick="removeListing(${i})" aria-label="Remove listing">&times;</button></td>`;
     tbody.appendChild(tr);
   });
@@ -300,18 +291,13 @@ function render() {
     return;
   }
 
-  const kept = values.filter(v => !isOutlier(v));
-  const dropped = values.length - kept.length;
-
   summary.innerHTML = `
     <div class="stats">
       <div class="stat"><div class="k">Listings</div><div class="v">${values.length}</div></div>
       <div class="stat"><div class="k">Median</div><div class="v">${money(med)}</div></div>
-      <div class="stat"><div class="k">Mean (all)</div><div class="v">${money(mean(values))}</div></div>
-      <div class="stat"><div class="k">Mean (trimmed)</div><div class="v">${kept.length ? money(mean(kept)) : '—'}</div></div>
+      <div class="stat"><div class="k">Mean</div><div class="v">${money(mean(values))}</div></div>
       <div class="stat"><div class="k">Range</div><div class="v">${money(Math.min(...values))} – ${money(Math.max(...values))}</div></div>
     </div>
-    ${dropped ? `<p class="muted">${dropped} listing${dropped === 1 ? '' : 's'} sat more than ${OUTLIER_THRESHOLD * 100}% from the median and ${dropped === 1 ? 'was' : 'were'} excluded from the trimmed mean.</p>` : ''}
     <div class="caveat">
       These are indicative asking prices from live listings on ${new Date().toLocaleDateString('en-GB')}.
       They are not values, and are not adjusted for condition, provenance, completeness
@@ -328,7 +314,7 @@ function exportCSV() {
   const lines = [
     ['Fairmind — watch market research record'],
     ['Search run', new Date().toLocaleString('en-GB')],
-    ['Brand', q.brand], ['Model', q.model], ['Reference', q.ref],
+    ['Brand', q.brand], ['Model', q.model],
     ['Year', q.year], ['Material', q.material], ['Box & papers', q.papers],
     ['Market', q.country],
     ['FX rates', `EUR ${r.EUR} / USD ${r.USD} / CHF ${r.CHF}`],
