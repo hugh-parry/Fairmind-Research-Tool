@@ -98,7 +98,7 @@
             <option>GBP</option><option>EUR</option><option>USD</option><option>CHF</option>
           </select>
         </div>
-        <div><label for="lYear">Listing year</label><input id="lYear" placeholder="2015"></div>
+        <div><label for="lYear">Year of manufacture</label><input id="lYear" placeholder="2015"></div>
         <div><label for="lPapers">Box &amp; papers</label><input id="lPapers" placeholder="Full set"></div>
         <div><label for="lUrl">Listing URL</label><input id="lUrl" placeholder="https://..."></div>
       </div>
@@ -151,32 +151,33 @@
    CONFIGURATION — the part you will edit most
    --------------------------------------------------------------------------
    Each source needs a function that turns the form values into that site's
-   own search URL. NONE OF THESE ARE VERIFIED except eBay. To fix each one:
+   own search URL. If a pattern hasn't been checked against the real site yet,
+   set verified: false — the page will say so next to the link. To verify one:
      1. Go to the site and run a real search by hand.
      2. Copy the URL from the address bar.
      3. Work out which bit is your search text and which bits are filters.
-     4. Rewrite the url() function below to reproduce it.
+     4. Rewrite the url() function below to reproduce it, then set verified: true.
    encodeURIComponent() escapes spaces and symbols so the URL stays valid.
    ========================================================================== */
 const SOURCES = [
   {
     name: 'eBay UK',
-    note: 'Verified pattern. Has an official API for later.',
+    verified: true,
     url: q => `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Chrono24',
-    note: 'Verified pattern.',
+    verified: true,
     url: q => `https://www.chrono24.co.uk/search/index.htm?dosearch=true&query=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watchfinder',
-    note: 'Verified pattern.',
+    verified: true,
     url: q => `https://www.watchfinder.co.uk/search?q=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watches of Switzerland',
-    note: 'Verified pattern. Retail only, useful for current RRP.',
+    verified: true,
     url: q => `https://www.watches-of-switzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
   }
 ];
@@ -219,7 +220,7 @@ function buildSearches() {
     a.textContent = s.name;
     const note = document.createElement('span');
     note.className = 'muted';
-    note.textContent = s.note;
+    note.textContent = s.verified ? 'Verified pattern' : 'No verified pattern';
     li.append(a, note);
     list.appendChild(li);
 
