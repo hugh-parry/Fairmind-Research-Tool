@@ -47,7 +47,6 @@
       <div class="grid">
         <div><label for="brand">Brand</label><input id="brand" placeholder="Rolex"></div>
         <div><label for="model">Model</label><input id="model" placeholder="Submariner Date"></div>
-        <div><label for="ref">Reference no.</label><input id="ref" placeholder="116610LN"></div>
         <div><label for="year">Year of manufacture</label><input id="year" placeholder="2015"></div>
         <div><label for="material">Case material</label><input id="material" placeholder="Stainless steel"></div>
         <div>
@@ -82,10 +81,6 @@
       <ul class="sources" id="sourceList">
         <li class="empty">Enter the piece above, then build the links.</li>
       </ul>
-      <p class="muted" style="margin-top:1.25rem">
-        Each link opens that site's own search, already filtered. Read the listings there,
-        then record the ones that are close enough below.
-      </p>
     </section>
 
     <!-- ===== 3. RECORD LISTINGS ===== -->
@@ -163,7 +158,7 @@
 const SOURCES = [
   {
     name: 'eBay UK',
-    note: 'Verified pattern. Has an official API for later.',
+    note: 'Verified pattern.',
     url: q => `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q.terms)}`
   },
   {
@@ -183,7 +178,7 @@ const SOURCES = [
   },
   {
     name: 'Watches of Switzerland',
-    note: 'Verified pattern. Retail only, useful for current RRP.',
+    note: 'Verified pattern.',
     url: q => `https://www.watches-of-switzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
   }
 ];
@@ -198,10 +193,9 @@ let listings = [];
 
 function piece() {
   const g = id => document.getElementById(id).value.trim();
-  const p = { brand:g('brand'), model:g('model'), ref:g('ref'), year:g('year'),
+  const p = { brand:g('brand'), model:g('model'), year:g('year'),
               material:g('material'), papers:g('papers'), country:g('country') };
-  // Reference number is the strongest identifier, so it leads the search terms.
-  p.terms = [p.brand, p.model, p.ref].filter(Boolean).join(' ');
+  p.terms = [p.brand, p.model].filter(Boolean).join(' ');
   return p;
 }
 
@@ -229,10 +223,7 @@ function buildSearches() {
     a.target = '_blank';
     a.rel = 'noopener';
     a.textContent = s.name;
-    const note = document.createElement('span');
-    note.className = 'muted';
-    note.textContent = s.note;
-    li.append(a, note);
+    li.append(a);
     list.appendChild(li);
 
     const opt = document.createElement('option');
@@ -334,7 +325,7 @@ function exportCSV() {
   const lines = [
     ['Fairmind — watch market research record'],
     ['Search run', new Date().toLocaleString('en-GB')],
-    ['Brand', q.brand], ['Model', q.model], ['Reference', q.ref],
+    ['Brand', q.brand], ['Model', q.model],
     ['Year', q.year], ['Material', q.material], ['Box & papers', q.papers],
     ['Market', q.country],
     ['FX rates', `EUR ${r.EUR} / USD ${r.USD} / CHF ${r.CHF}`],

@@ -202,22 +202,22 @@
    ========================================================================== */
 const SOURCES = [
   /* --- auction --------------------------------------------------------- */
-  { market: 'auction', name: "Sotheby's", note: 'Verified pattern. Set jewellery/past-sale filters on the site itself.',
+  { market: 'auction', name: "Sotheby's", note: 'Verified pattern.',
     url: q => `https://www.sothebys.com/en/search?query=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: "Christie's", note: 'Verified pattern. Set the results/status filter on the site itself.',
+  { market: 'auction', name: "Christie's", note: 'Verified pattern.',
     url: q => `https://www.christies.com/en/search?entry=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Bonhams', note: 'Verified pattern. Often the best UK mid-market comparables.',
+  { market: 'auction', name: 'Bonhams', note: 'Verified pattern.',
     url: q => `https://www.bonhams.com/search/?query=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Phillips', note: 'Verified pattern. Strong on signed and contemporary pieces.',
+  { market: 'auction', name: 'Phillips', note: 'Verified pattern.',
     url: q => `https://www.phillips.com/Search?Search=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'the saleroom', note: 'Verified pattern. Aggregates UK regional houses.',
+  { market: 'auction', name: 'the saleroom', note: 'Verified pattern.',
     url: q => `https://www.the-saleroom.com/en-gb/search-results?searchterm=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Invaluable', note: 'Verified pattern. Wide aggregator, some results need an account.',
+  { market: 'auction', name: 'Invaluable', note: 'Verified pattern.',
     url: q => `https://www.invaluable.com/search?query=${encodeURIComponent(q.terms)}` },
 
   /* --- retail ---------------------------------------------------------- */
@@ -226,13 +226,13 @@ const SOURCES = [
        the retail block) rather than 1stDibs' own auction-style listings.
        Category path (e.g. /jewelry/rings/) dropped since our terms span
        multiple jewellery types — recheck if results look too broad. */
-    note: 'Verified pattern. Dealer asking prices, tends to sit high.',
+    note: 'Verified pattern.',
     url: q => `https://www.1stdibs.com/search/?q=${encodeURIComponent(q.terms)}&st=classified` },
 
-  { market: 'retail', name: 'eBay UK', note: 'Verified pattern. Has an official API for later.',
+  { market: 'retail', name: 'eBay UK', note: 'Verified pattern.',
     url: q => `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q.terms)}` },
 
-  { market: 'retail', name: 'Etsy (vintage)', note: 'Verified pattern. Useful for period costume and silver.',
+  { market: 'retail', name: 'Etsy (vintage)', note: 'Verified pattern.',
     url: q => `https://www.etsy.com/search?q=${encodeURIComponent(q.terms)}` }
 ];
 
