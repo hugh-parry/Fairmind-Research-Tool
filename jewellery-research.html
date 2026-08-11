@@ -202,32 +202,41 @@
    ========================================================================== */
 const SOURCES = [
   /* --- auction --------------------------------------------------------- */
-  { market: 'auction', name: "Sotheby's", note: 'TODO — verify. Filter to jewellery, past 6 months.',
+  { market: 'auction', name: "Sotheby's", note: 'Verified pattern. Set jewellery/past-sale filters on the site itself.',
     url: q => `https://www.sothebys.com/en/search?query=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: "Christie's", note: 'TODO — verify. Past results section.',
-    url: q => `https://www.christies.com/en/results?keyword=${encodeURIComponent(q.terms)}` },
+  { market: 'auction', name: "Christie's", note: 'Verified pattern. Set the results/status filter on the site itself.',
+    url: q => `https://www.christies.com/en/search?entry=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Bonhams', note: 'TODO — verify. Often the best UK mid-market comparables.',
-    url: q => `https://www.bonhams.com/search/?q=${encodeURIComponent(q.terms)}` },
+  { market: 'auction', name: 'Bonhams', note: 'Verified pattern. Often the best UK mid-market comparables.',
+    url: q => `https://www.bonhams.com/search/?query=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Phillips', note: 'TODO — verify. Strong on signed and contemporary pieces.',
+  { market: 'auction', name: 'Phillips',
+    /* Still TODO: testing with a single word ("Rolex") redirected to an
+       artist/maker ID page (/artist/5830/rolex) instead of running a search.
+       Needs retesting with a two-word term via the site's actual search box. */
+    note: 'TODO — still guessing. Try the search box with a two-word term, e.g. "Cartier Ring".',
     url: q => `https://www.phillips.com/search?searchQuery=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'the saleroom', note: 'TODO — verify. Aggregates UK regional houses.',
-    url: q => `https://www.the-saleroom.com/en-gb/search-results?query=${encodeURIComponent(q.terms)}` },
+  { market: 'auction', name: 'the saleroom', note: 'Verified pattern. Aggregates UK regional houses.',
+    url: q => `https://www.the-saleroom.com/en-gb/search-results?searchterm=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Invaluable', note: 'TODO — verify. Wide aggregator, some results need an account.',
+  { market: 'auction', name: 'Invaluable', note: 'Verified pattern. Wide aggregator, some results need an account.',
     url: q => `https://www.invaluable.com/search?query=${encodeURIComponent(q.terms)}` },
 
   /* --- retail ---------------------------------------------------------- */
-  { market: 'retail', name: '1stDibs', note: 'TODO — verify. Dealer asking prices, tends to sit high.',
-    url: q => `https://www.1stdibs.com/search/?q=${encodeURIComponent(q.terms)}` },
+  { market: 'retail', name: '1stDibs',
+    /* st=classified filters to dealer "buy now" listings (what we want for
+       the retail block) rather than 1stDibs' own auction-style listings.
+       Category path (e.g. /jewelry/rings/) dropped since our terms span
+       multiple jewellery types — recheck if results look too broad. */
+    note: 'Verified pattern. Dealer asking prices, tends to sit high.',
+    url: q => `https://www.1stdibs.com/search/?q=${encodeURIComponent(q.terms)}&st=classified` },
 
   { market: 'retail', name: 'eBay UK', note: 'Verified pattern. Has an official API for later.',
     url: q => `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q.terms)}` },
 
-  { market: 'retail', name: 'Etsy (vintage)', note: 'TODO — verify. Useful for period costume and silver.',
+  { market: 'retail', name: 'Etsy (vintage)', note: 'Verified pattern. Useful for period costume and silver.',
     url: q => `https://www.etsy.com/search?q=${encodeURIComponent(q.terms)}` }
 ];
 

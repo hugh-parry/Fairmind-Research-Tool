@@ -168,18 +168,25 @@ const SOURCES = [
   },
   {
     name: 'Chrono24',
-    note: 'TODO — verify by running a search on the site.',
+    /* Still TODO: the site's advanced-filter form uses numeric brand IDs
+       (e.g. manufacturerIds=221 for Rolex) rather than a text query, and its
+       own free-text search box hasn't been tested yet with a two-word term.
+       Left as the original guess until that's confirmed. */
+    note: 'TODO — still guessing. Try the plain search box (not filters) with a two-word term, e.g. "Rolex Submariner".',
     url: q => `https://www.chrono24.co.uk/search/index.htm?query=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watchfinder',
-    note: 'TODO — verify by running a search on the site.',
+    note: 'Verified pattern.',
     url: q => `https://www.watchfinder.co.uk/search?q=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watches of Switzerland',
-    note: 'TODO — verify. Retail only, useful for current RRP.',
-    url: q => `https://www.thewatchesofswitzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
+    /* Domain confirmed as watches-of-switzerland.co.uk (was wrong before).
+       Path is still TODO: testing so far only reached category/browse pages
+       (e.g. /c/rolex/watches-selection/Air-King), not a text search. */
+    note: 'TODO — domain fixed, but search path unconfirmed. Retail only, useful for current RRP.',
+    url: q => `https://www.watches-of-switzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
   }
 ];
 
