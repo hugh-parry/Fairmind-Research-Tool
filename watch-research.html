@@ -223,7 +223,10 @@ function buildSearches() {
     a.target = '_blank';
     a.rel = 'noopener';
     a.textContent = s.name;
-    li.append(a);
+    const note = document.createElement('span');
+    note.className = 'muted';
+    note.textContent = s.note;
+    li.append(a, note);
     list.appendChild(li);
 
     const opt = document.createElement('option');
