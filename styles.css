@@ -2,15 +2,16 @@
    Fairmind Research Tools — shared stylesheet
    Both pages load this file, so a change here updates the whole site.
    --------------------------------------------------------------------------
-   Colours and the wordmark weight (Montserrat Thin) are confirmed against
-   fairmind.co.uk via DevTools inspection.
+   Colours are estimated from the Fairmind site. To get them exact:
+   open fairmind.co.uk, right-click the blue nav bar > Inspect, and read the
+   background-color value. Paste it in below. Same for the pink button.
    ========================================================================== */
 
 :root {
   /* Brand */
-  --blue:       #cedde2;   /* nav bar */
+  --blue:       #c5d8de;   /* nav bar */
   --blue-deep:  #bcd2d9;   /* page title band */
-  --pink:       #f05562;   /* active nav, buttons */
+  --pink:       #ef4b63;   /* active nav, buttons */
   --pink-deep:  #d93b52;   /* button hover */
 
   /* Neutrals */
@@ -51,7 +52,7 @@ a { color: var(--pink); }
 
 .wordmark {
   font-size: clamp(2rem, 6vw, 3.4rem);
-  font-weight: 100;
+  font-weight: 200;
   letter-spacing: var(--wide);
   margin: 0;
   line-height: 1;
@@ -276,6 +277,17 @@ td {
   vertical-align: top;
 }
 td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.outlier td { background: #fdf4f5; }
+
+.tag {
+  display: inline-block;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  color: var(--pink);
+  border: 1px solid var(--pink);
+  padding: 0 .35rem;
+}
 
 .del {
   background: none;
@@ -313,6 +325,31 @@ td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-n
   border-left: 2px solid var(--blue);
   font-size: .82rem;
   color: var(--ink-soft);
+}
+
+/* --- market segments (jewellery tool) ------------------------------------- */
+.segment { margin-bottom: 2.5rem; }
+.segment:last-child { margin-bottom: 0; }
+
+.segment-title {
+  font-size: .8rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--medium);
+  margin: 0 0 .35rem;
+}
+.segment-note {
+  margin: 0 0 1.25rem;
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+
+.warn {
+  padding: 1rem 1.25rem;
+  background: #fdf4f5;
+  border-left: 2px solid var(--pink);
+  font-size: .82rem;
+  margin: 1.5rem 0 0;
 }
 
 /* --- footer -------------------------------------------------------------- */

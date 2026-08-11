@@ -33,9 +33,25 @@ official Browse API; adding that is permitted but needs an API key and is not ye
 ## Files
 
 - `index.html` — homepage, lists available tools
-- `watch-research.html` — the watch tool (form, search links, entry table, summary, CSV export)
-- `styles.css` — shared stylesheet for both pages
+- `watch-research.html` — watch tool (live retail listings only)
+- `jewellery-research.html` — jewellery tool (auction results + retail listings)
+- `styles.css` — shared stylesheet for all pages
 - `CLAUDE.md` — this file
+
+## Jewellery tool: two rules that must not be relaxed
+
+1. **Auction and retail figures are never averaged together.** A hammer price is a price
+   paid in competition; a retail listing is a price asked. They are summarised in separate
+   blocks and outliers are judged within each market separately. Any change that produces
+   a single combined average is wrong.
+2. **Auction figures include buyer's premium.** Hammer alone understates what the buyer
+   actually paid, often by 25%+. The premium field is recorded per lot and applied in
+   `gbp()`.
+
+Jewellery has no equivalent of a watch reference number, so comparables match on
+description and can differ materially. The outlier threshold is deliberately wider than
+the watch tool's (30% vs 25%) and the caveat text says so explicitly. Don't tighten it
+without discussing with Annabell.
 
 No build step, no framework, no dependencies beyond Google Fonts. Plain HTML, CSS and
 vanilla JavaScript, deliberately, so it stays maintainable after the internship ends.
@@ -63,11 +79,15 @@ live site. `--blue`, `--pink` and `--font` still need verifying.
 
 ## Open work
 
-- [x] Verify the four search URL patterns in `SOURCES` in `watch-research.html`.
-      All four confirmed (eBay, Chrono24, Watchfinder, Watches of Switzerland).
-- [x] Confirm `--blue`, `--pink` and the wordmark weight against the live Fairmind site
-- [x] Outlier flagging removed — the valuer judges outliers by eye instead. Could be
-      reintroduced later with an agreed rule if that stops being reliable enough.
+- [ ] Verify the four search URL patterns in `SOURCES` in `watch-research.html`.
+      Only the eBay one is confirmed; the other three are guesses marked TODO.
+- [ ] Verify the nine search URL patterns in `SOURCES` in `jewellery-research.html`.
+      All marked TODO except eBay. Auction sites often need the date filter set on
+      the site itself — check whether any support a date range in the URL.
+- [ ] Agree default buyer's premium rates with Annabell, or leave per-lot as now
+- [ ] Confirm `--blue`, `--pink` and `--font` against the live Fairmind site
+- [ ] Review the outlier rule with Annabell. Currently a flat 25% from the median
+      (`OUTLIER_THRESHOLD`), which is a blunt instrument and hasn't been agreed.
 - [ ] Decide whether the two "coming soon" cards on the homepage stay
 
 ## Context to keep in mind
