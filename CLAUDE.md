@@ -79,16 +79,12 @@ live site. `--blue`, `--pink` and `--font` still need verifying.
 
 ## Open work
 
-- [ ] Verify the search URL patterns in `SOURCES` in `watch-research.html`.
-      eBay and Watchfinder are confirmed. Watches of Switzerland's domain is fixed
-      but its search path is still a guess. Chrono24 is still unconfirmed — its
-      site uses numeric brand IDs via an advanced-filter form rather than a plain
-      text query, so the free-text search box (not the filters) needs testing.
-- [ ] Verify the remaining search URL pattern in `SOURCES` in `jewellery-research.html`.
-      All confirmed except Phillips, which redirected to an artist/maker ID page
-      when tested with a single word — needs retesting with a two-word term via
-      the site's actual search box. Date/status filters (past sales vs upcoming
-      lots) are deliberately left to each site's own controls, not the URL.
+- [x] Verify the search URL patterns in `SOURCES` in `watch-research.html`.
+      All four confirmed: eBay, Watchfinder, Chrono24 (needs `dosearch=true`
+      alongside `query=`), and Watches of Switzerland (`/search?q=`).
+- [x] Verify the search URL patterns in `SOURCES` in `jewellery-research.html`.
+      All nine confirmed. Date/status filters (past sales vs upcoming lots) are
+      deliberately left to each site's own controls, not the URL.
 - [ ] Agree default buyer's premium rates with Annabell, or leave per-lot as now
 - [ ] Confirm `--blue`, `--pink` and `--font` against the live Fairmind site
 - [ ] Review the outlier rule with Annabell. Currently a flat 25% from the median

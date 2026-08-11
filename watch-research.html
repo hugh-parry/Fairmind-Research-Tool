@@ -168,12 +168,13 @@ const SOURCES = [
   },
   {
     name: 'Chrono24',
-    /* Still TODO: the site's advanced-filter form uses numeric brand IDs
-       (e.g. manufacturerIds=221 for Rolex) rather than a text query, and its
-       own free-text search box hasn't been tested yet with a two-word term.
-       Left as the original guess until that's confirmed. */
-    note: 'TODO — still guessing. Try the plain search box (not filters) with a two-word term, e.g. "Rolex Submariner".',
-    url: q => `https://www.chrono24.co.uk/search/index.htm?query=${encodeURIComponent(q.terms)}`
+    /* dosearch=true is required — without it the query param is ignored and
+       the site just shows a generic landing page. For an exact brand+model
+       match Chrono24 redirects to its own canonical category page (e.g.
+       /rolex/submariner--mod1.htm) but still honours the query string, so
+       this pattern works whether or not that redirect happens. */
+    note: 'Verified pattern.',
+    url: q => `https://www.chrono24.co.uk/search/index.htm?dosearch=true&query=${encodeURIComponent(q.terms)}`
   },
   {
     name: 'Watchfinder',
@@ -182,10 +183,7 @@ const SOURCES = [
   },
   {
     name: 'Watches of Switzerland',
-    /* Domain confirmed as watches-of-switzerland.co.uk (was wrong before).
-       Path is still TODO: testing so far only reached category/browse pages
-       (e.g. /c/rolex/watches-selection/Air-King), not a text search. */
-    note: 'TODO — domain fixed, but search path unconfirmed. Retail only, useful for current RRP.',
+    note: 'Verified pattern. Retail only, useful for current RRP.',
     url: q => `https://www.watches-of-switzerland.co.uk/search?q=${encodeURIComponent(q.terms)}`
   }
 ];

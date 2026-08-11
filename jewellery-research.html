@@ -211,12 +211,8 @@ const SOURCES = [
   { market: 'auction', name: 'Bonhams', note: 'Verified pattern. Often the best UK mid-market comparables.',
     url: q => `https://www.bonhams.com/search/?query=${encodeURIComponent(q.terms)}` },
 
-  { market: 'auction', name: 'Phillips',
-    /* Still TODO: testing with a single word ("Rolex") redirected to an
-       artist/maker ID page (/artist/5830/rolex) instead of running a search.
-       Needs retesting with a two-word term via the site's actual search box. */
-    note: 'TODO — still guessing. Try the search box with a two-word term, e.g. "Cartier Ring".',
-    url: q => `https://www.phillips.com/search?searchQuery=${encodeURIComponent(q.terms)}` },
+  { market: 'auction', name: 'Phillips', note: 'Verified pattern. Strong on signed and contemporary pieces.',
+    url: q => `https://www.phillips.com/Search?Search=${encodeURIComponent(q.terms)}` },
 
   { market: 'auction', name: 'the saleroom', note: 'Verified pattern. Aggregates UK regional houses.',
     url: q => `https://www.the-saleroom.com/en-gb/search-results?searchterm=${encodeURIComponent(q.terms)}` },
