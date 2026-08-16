@@ -1,1 +1,7 @@
 .DS_Store
+
+# Real supplier stock lists (Gemex, Josyfon, Weissbart, Diamonds For Today, etc.)
+# are commercially sensitive and must never be pushed to this public repo.
+# Keep them on disk for local testing only.
+*.xlsx
+*.pdf

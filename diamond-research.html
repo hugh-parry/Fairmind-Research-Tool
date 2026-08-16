@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diamond Stock Search — Fairmind</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<!-- Vendored library, not fetched from a CDN, so the tool still works if
+     SheetJS's own site is ever down or the vendored copy is pinned to an
+     older version deliberately. See CLAUDE.md for why this is here. -->
+<script src="vendor/xlsx.mini.min.js"></script>
+</head>
+
+<body>
+
+<header class="masthead">
+  <p class="wordmark">FAIRMIND</p>
+  <p class="tagline">Expert Jewellery &amp; Watch Valuation</p>
+</header>
+
+<nav class="nav">
+  <ul>
+    <li><a href="index.html">Research Tools</a></li>
+    <li><a href="watch-research.html">Watch Research</a></li>
+    <li><a href="jewellery-research.html">Jewellery Research</a></li>
+    <li><a href="diamond-research.html" aria-current="page">Diamond Stock Search</a></li>
+    <li><a href="https://www.fairmind.co.uk" target="_blank" rel="noopener">Main Site</a></li>
+  </ul>
+</nav>
+
+<div class="band">
+  <h1>Diamond Stock Search</h1>
+</div>
+
+<main>
+  <div class="wrap">
+
+    <div class="lead">
+      <p class="muted">
+        Load a supplier's loose diamond stock list and search it against criteria you set.
+        Nothing is uploaded anywhere — the file is read by your browser only, and is gone
+        the moment you close or reload this page. This is a search of stock on offer, not a
+        valuation.
+      </p>
+    </div>
+
+    <!-- ===== 1. LOAD STOCK LISTS ===== -->
+    <section class="card">
+      <p class="section-heading">1 &nbsp;Load stock lists</p>
+      <p class="muted" style="margin-bottom:1.5rem">
+        Each supplier lays its list out differently, so there is a separate box per
+        supplier below. Load as many as you have — a search checks all loaded lists
+        together. Accepts the supplier's own .xlsx export, or a .csv.
+      </p>
+
+      <div class="grid">
+        <div>
+          <label for="file-gemex">Gemex</label>
+          <input type="file" id="file-gemex" accept=".xlsx,.csv" onchange="handleFileUpload('gemex', this)">
+          <p class="muted" id="status-gemex" style="margin-top:.5rem">No file loaded.</p>
+        </div>
+        <div>
+          <label for="file-josyfon">Josyfon</label>
+          <input type="file" id="file-josyfon" accept=".xlsx,.csv" onchange="handleFileUpload('josyfon', this)">
+          <p class="muted" id="status-josyfon" style="margin-top:.5rem">No file loaded.</p>
+        </div>
+        <div>
+          <label for="file-weissbart">Weissbart GIA</label>
+          <input type="file" id="file-weissbart" accept=".xlsx,.csv" onchange="handleFileUpload('weissbart', this)">
+          <p class="muted" id="status-weissbart" style="margin-top:.5rem">No file loaded.</p>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top:1.5rem">
+        Diamonds For Today is not included yet — their list is only available as a PDF with
+        text that doesn't extract reliably, so it isn't safe to parse automatically. Ask
+        Diamonds For Today for a CSV or Excel export if you need their stock searched too.
+      </p>
+    </section>
+
+    <!-- ===== 2. SEARCH CRITERIA ===== -->
+    <section class="card">
+      <p class="section-heading">2 &nbsp;Search criteria</p>
+      <p class="muted" style="margin-bottom:1.5rem">
+        Leave anything you don't need blank — a search only applies the criteria you fill
+        in, and ignores the rest.
+      </p>
+
+      <div class="grid">
+        <div>
+          <label for="cShape">Shape</label>
+          <select id="cShape">
+            <option value="">Any</option>
+          </select>
+        </div>
+        <div>
+          <label for="cLab">Lab</label>
+          <select id="cLab">
+            <option value="">Any</option>
+            <option value="GIA">GIA</option>
+            <option value="IGI">IGI</option>
+            <option value="HRD">HRD</option>
+            <option value="NON">Not certified (NON)</option>
+          </select>
+        </div>
+        <div><label for="cWeightMin">Weight from (ct)</label><input id="cWeightMin" type="number" step="0.01" placeholder="1.00"></div>
+        <div><label for="cWeightMax">Weight to (ct)</label><input id="cWeightMax" type="number" step="0.01" placeholder="1.50"></div>
+        <div>
+          <label for="cColourMin">Colour, best</label>
+          <select id="cColourMin"><option value="">Any</option></select>
+        </div>
+        <div>
+          <label for="cColourMax">Colour, worst</label>
+          <select id="cColourMax"><option value="">Any</option></select>
+        </div>
+        <div>
+          <label for="cClarityMin">Clarity, best</label>
+          <select id="cClarityMin"><option value="">Any</option></select>
+        </div>
+        <div>
+          <label for="cClarityMax">Clarity, worst</label>
+          <select id="cClarityMax"><option value="">Any</option></select>
+        </div>
+        <div><label for="cPriceMin">Price from (£)</label><input id="cPriceMin" type="number" step="1" placeholder="500"></div>
+        <div><label for="cPriceMax">Price to (£)</label><input id="cPriceMax" type="number" step="1" placeholder="5000"></div>
+      </div>
+
+      <p class="muted" style="margin-top:1.25rem">
+        A colour or clarity range only matches stones on the standard grading scale.
+        Fancy-coloured stones (e.g. "Fancy Light Yellow") sit outside the D–Z scale, so a
+        colour range will correctly exclude them — leave colour blank to include them.
+      </p>
+
+      <div class="actions">
+        <button class="btn" onclick="runSearch()">Search loaded stones</button>
+        <button class="btn outline" onclick="location.reload()">Clear all</button>
+      </div>
+    </section>
+
+    <!-- ===== 3. RESULTS ===== -->
+    <section class="card">
+      <p class="section-heading">3 &nbsp;Results</p>
+      <div id="resultsSummary" class="muted" style="margin-bottom:1rem">Load a stock list and run a search to see results.</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Supplier</th><th>Ref</th><th>Shape</th><th>Weight</th>
+            <th>Colour</th><th>Clarity</th><th>Lab</th><th>Cert</th><th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="resultRows">
+          <tr><td colspan="9" class="empty">No search run yet.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="actions">
+        <button class="btn outline" onclick="exportCSV()">Download results (CSV)</button>
+      </div>
+
+      <div class="caveat">
+        These are stones currently offered by the supplier at the time the list was
+        produced, not a valuation of any stone you already hold. Check the source list's
+        date and the stone's own certificate before relying on any figure here.
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <p>Fairmind Jewellery Valuations &middot; Chester</p>
+  <p>Internal stock search. Not a valuation.</p>
+</footer>
+
+<script>
+/* ==========================================================================
+   CONFIGURATION — one entry per supplier
+   --------------------------------------------------------------------------
+   Every supplier lays out their spreadsheet differently (different column
+   names, different column order, extra title rows above the real data —
+   see the comments on parseWorkbook() below for how that's handled). To add
+   a new supplier: add an entry here with the exact column header text used
+   in their file, and one <input type="file"> block above with a matching id.
+
+   requiredHeaders: column names used to FIND the header row. The parser
+   scans the first 30 rows of the sheet and picks the first row that contains
+   all of these (case-insensitive) — that's what lets it skip past a
+   supplier's title rows without us having to hard-code "skip 10 rows",
+   which would break the moment they change their template slightly.
+
+   map: for each field we care about, the exact column header text in that
+   supplier's file. Blank/missing fields (e.g. Josyfon has no separate Lab
+   column) are just left out of the map — see certText below.
+   ========================================================================== */
+const SUPPLIERS = [
+  {
+    key: 'gemex',
+    name: 'Gemex',
+    requiredHeaders: ['Shape', 'Weight', 'Colour', 'Clarity'],
+    map: { ref: 'NO.', lab: 'LAB', shape: 'Shape', weight: 'Weight',
+           colour: 'Colour', clarity: 'Clarity', price: 'Price for Stone (GBP)' }
+  },
+  {
+    key: 'josyfon',
+    name: 'Josyfon',
+    requiredHeaders: ['Shape', 'Wt', 'Col', 'Pur'],
+    /* Josyfon has no separate lab column — the lab is the first word of the
+       Cert/Pdf text field, e.g. "GIA 6542870426". certText tells the parser
+       which column to pull that apart from. */
+    map: { ref: 'Code', shape: 'Shape', weight: 'Wt', colour: 'Col',
+           clarity: 'Pur', price: 'Total', certText: 'Cert/Pdf' }
+  },
+  {
+    key: 'weissbart',
+    name: 'Weissbart GIA',
+    requiredHeaders: ['Shape', 'Crt', 'Color', 'Clarity'],
+    map: { ref: 'Stock No', lab: 'Lab', shape: 'Shape', weight: 'Crt',
+           colour: 'Color', clarity: 'Clarity', price: 'Total £ Price', cert: 'Cert No' }
+  }
+];
+
+/* Supplier shape wording, all mapped down to one canonical name so a shape
+   filter works across suppliers even though they don't agree on spelling.
+   Extend this if a future file uses a shape code not listed here — an
+   unrecognised shape isn't dropped, it just won't match a shape filter. */
+const SHAPE_ALIASES = {
+  'round': 'Round', 'round brilliant': 'Round', 'rbc': 'Round', 'br': 'Round', 'rb': 'Round',
+  'princess': 'Princess', 'pc': 'Princess',
+  'emerald': 'Emerald', 'emerald cut': 'Emerald', 'ec': 'Emerald',
+  'asscher': 'Asscher', 'ac': 'Asscher',
+  'oval': 'Oval', 'ov': 'Oval',
+  'radiant': 'Radiant', 'rad': 'Radiant',
+  'pear': 'Pear', 'pear cut': 'Pear', 'ps': 'Pear',
+  'heart': 'Heart', 'heart cut': 'Heart', 'hs': 'Heart',
+  'marquise': 'Marquise', 'mq': 'Marquise',
+  'cushion': 'Cushion', 'cushion cut': 'Cushion', 'cu': 'Cushion'
+};
+
+/* Standard grading scales, best to worst. A stone's colour/clarity is
+   compared by its position (index) in these arrays. Anything not found in
+   the scale (a fancy colour, an unrecognised clarity code) is treated as
+   "can't be judged against a range" — see matches() below. */
+const COLOUR_SCALE = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+const CLARITY_SCALE = ['FL','IF','VVS1','VVS2','VS1','VS2','SI1','SI2','I1','I2','I3'];
+
+/* ========================================================================== */
+
+let stones = [];           // every diamond loaded so far, from every supplier
+let sourceCounts = {};     // key -> number of diamonds loaded from that supplier
+let results = [];          // the current search results, kept for CSV export
+
+/* --- build the criteria dropdowns from the scales/aliases above, so the
+   lists in the config are the only place that ever needs editing --------- */
+(function populateDropdowns() {
+  const shapeSel = document.getElementById('cShape');
+  [...new Set(Object.values(SHAPE_ALIASES))].sort().forEach(s => {
+    const o = document.createElement('option'); o.textContent = s; shapeSel.appendChild(o);
+  });
+
+  COLOUR_SCALE.forEach((c, i) => {
+    ['cColourMin', 'cColourMax'].forEach(id => {
+      const o = document.createElement('option'); o.value = i; o.textContent = c;
+      document.getElementById(id).appendChild(o);
+    });
+  });
+
+  CLARITY_SCALE.forEach((c, i) => {
+    ['cClarityMin', 'cClarityMax'].forEach(id => {
+      const o = document.createElement('option'); o.value = i; o.textContent = c;
+      document.getElementById(id).appendChild(o);
+    });
+  });
+})();
+
+/* --- reading the file ----------------------------------------------------
+   .xlsx files are read as binary and handed to the SheetJS library.
+   .csv files are just text, so they're read as plain text instead — SheetJS
+   can parse that too, but reading it as text first avoids any binary/encoding
+   mismatch. Either way we end up with the same shape of data: an array of
+   rows, each row an array of cell values, exactly like a spreadsheet grid. */
+function handleFileUpload(key, input) {
+  const file = input.files[0];
+  const status = document.getElementById('status-' + key);
+  if (!file) return;
+
+  status.textContent = 'Reading file…';
+
+  const reader = new FileReader();
+  reader.onerror = () => { status.textContent = 'Could not read that file.'; };
+  reader.onload = e => {
+    try {
+      const isCSV = file.name.toLowerCase().endsWith('.csv');
+      const workbook = isCSV
+        ? XLSX.read(e.target.result, { type: 'string' })
+        : XLSX.read(e.target.result, { type: 'array' });
+
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+      const config = SUPPLIERS.find(s => s.key === key);
+      const loaded = parseWorkbook(rows, config);
+
+      if (!loaded.length) {
+        status.textContent = 'No recognisable diamond rows found in that file.';
+        return;
+      }
+
+      // Replace any previous load from this same supplier rather than adding
+      // to it, so re-loading a corrected file doesn't leave duplicates behind.
+      stones = stones.filter(s => s.source !== config.name);
+      stones.push(...loaded);
+      sourceCounts[key] = loaded.length;
+
+      status.textContent = `${loaded.length.toLocaleString('en-GB')} diamonds loaded (${file.name}).`;
+    } catch (err) {
+      status.textContent = 'Could not read that file — is it a valid .xlsx or .csv?';
+    }
+  };
+
+  if (file.name.toLowerCase().endsWith('.csv')) reader.readAsText(file);
+  else reader.readAsArrayBuffer(file);
+}
+
+/* --- turning a supplier's raw grid of rows into diamond records ----------
+   1. Find the header row: the first row (in the first 30) containing all of
+      requiredHeaders. This is what lets a supplier have title rows or blank
+      rows above their real header without breaking the parser.
+   2. Work out which column number each field lives in, by matching header
+      text — not by column position, so column reordering doesn't break it.
+   3. Read every row below the header. A row is only kept as a diamond if its
+      weight parses to a sensible number — this quietly skips section-header
+      rows (e.g. Weissbart's "ROUND" divider rows), blank rows, and repeated
+      title rows wherever they happen to fall, without needing to know in
+      advance how many of them there are or where. */
+function parseWorkbook(rows, config) {
+  const norm = s => String(s ?? '').trim().toLowerCase();
+
+  let headerRowIndex = -1;
+  let headerRow = null;
+  for (let i = 0; i < Math.min(rows.length, 30); i++) {
+    const cells = rows[i].map(norm);
+    if (config.requiredHeaders.every(h => cells.includes(norm(h)))) {
+      headerRowIndex = i;
+      headerRow = cells;
+      break;
+    }
+  }
+  if (headerRowIndex === -1) return [];
+
+  const columnFor = headerText => headerRow.indexOf(norm(headerText));
+  const columns = {};
+  Object.entries(config.map).forEach(([field, headerText]) => {
+    columns[field] = columnFor(headerText);
+  });
+
+  const diamonds = [];
+  for (let i = headerRowIndex + 1; i < rows.length; i++) {
+    const row = rows[i];
+    const get = field => columns[field] >= 0 ? row[columns[field]] : '';
+
+    const weight = parseFloat(get('weight'));
+    if (!isFinite(weight) || weight <= 0) continue; // not a real stone row
+
+    const rawColour = String(get('colour') ?? '').trim();
+    const rawClarity = String(get('clarity') ?? '').trim().toUpperCase();
+    const rawShape = String(get('shape') ?? '').trim();
+
+    // Josyfon-only: pull the lab out of the front of the certificate text
+    // field, e.g. "GIA 6542870426" -> lab "GIA", cert "6542870426".
+    let lab = String(get('lab') ?? '').trim().toUpperCase();
+    let cert = String(get('cert') ?? get('certNo') ?? '').trim();
+    if (!lab && columns.certText >= 0) {
+      const certText = String(get('certText') ?? '').trim();
+      const parts = certText.split(/\s+/);
+      lab = (parts[0] || '').toUpperCase();
+      cert = parts.slice(1).join(' ');
+    }
+
+    diamonds.push({
+      source: config.name,
+      ref: String(get('ref') ?? '').trim(),
+      shape: rawShape,
+      shapeCanonical: SHAPE_ALIASES[rawShape.toLowerCase()] || rawShape,
+      weight: weight,
+      colour: rawColour,
+      colourIndex: COLOUR_SCALE.indexOf(rawColour.toUpperCase()),
+      clarity: rawClarity,
+      clarityIndex: CLARITY_SCALE.indexOf(rawClarity),
+      lab: lab,
+      cert: cert,
+      price: parseMoney(get('price'))
+    });
+  }
+  return diamonds;
+}
+
+/* Strips "£", commas, spaces etc. so "£1,250" and 1250 both come out as 1250. */
+function parseMoney(raw) {
+  const n = parseFloat(String(raw ?? '').replace(/[^0-9.]/g, ''));
+  return isFinite(n) ? n : 0;
+}
+
+function money(n) { return '£' + n.toLocaleString('en-GB', { maximumFractionDigits: 0 }); }
+
+/* --- matching a stone against the criteria the valuer filled in ----------
+   Every criterion is optional. A blank criterion is simply skipped, so a
+   search with only two fields filled in only checks those two. */
+function matches(stone, c) {
+  if (c.shape && stone.shapeCanonical !== c.shape) return false;
+  if (c.lab && stone.lab !== c.lab) return false;
+  if (c.weightMin != null && stone.weight < c.weightMin) return false;
+  if (c.weightMax != null && stone.weight > c.weightMax) return false;
+  if (c.priceMin != null && stone.price < c.priceMin) return false;
+  if (c.priceMax != null && stone.price > c.priceMax) return false;
+
+  if (c.colourMin != null || c.colourMax != null) {
+    if (stone.colourIndex === -1) return false; // fancy/unrecognised colour, can't rank it
+    if (c.colourMin != null && stone.colourIndex < c.colourMin) return false;
+    if (c.colourMax != null && stone.colourIndex > c.colourMax) return false;
+  }
+
+  if (c.clarityMin != null || c.clarityMax != null) {
+    if (stone.clarityIndex === -1) return false;
+    if (c.clarityMin != null && stone.clarityIndex < c.clarityMin) return false;
+    if (c.clarityMax != null && stone.clarityIndex > c.clarityMax) return false;
+  }
+
+  return true;
+}
+
+function criteria() {
+  const val = id => document.getElementById(id).value;
+  const num = id => { const v = parseFloat(val(id)); return isFinite(v) ? v : null; };
+  const idx = id => { const v = val(id); return v === '' ? null : parseInt(v, 10); };
+  return {
+    shape: val('cShape') || null,
+    lab: val('cLab') || null,
+    weightMin: num('cWeightMin'), weightMax: num('cWeightMax'),
+    colourMin: idx('cColourMin'), colourMax: idx('cColourMax'),
+    clarityMin: idx('cClarityMin'), clarityMax: idx('cClarityMax'),
+    priceMin: num('cPriceMin'), priceMax: num('cPriceMax')
+  };
+}
+
+function runSearch() {
+  const summary = document.getElementById('resultsSummary');
+  const tbody = document.getElementById('resultRows');
+
+  if (!stones.length) {
+    summary.textContent = 'Load at least one stock list above before searching.';
+    return;
+  }
+
+  const c = criteria();
+  results = stones.filter(s => matches(s, c));
+
+  if (!results.length) {
+    summary.textContent = 'There are no diamonds that match this criteria.';
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">There are no diamonds that match this criteria.</td></tr>';
+    return;
+  }
+
+  summary.textContent = `${results.length.toLocaleString('en-GB')} matching diamond${results.length === 1 ? '' : 's'} out of ${stones.length.toLocaleString('en-GB')} loaded.`;
+
+  tbody.innerHTML = '';
+  results.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${s.source}</td>
+      <td>${s.ref || '—'}</td>
+      <td>${s.shapeCanonical}</td>
+      <td class="num">${s.weight.toFixed(2)}</td>
+      <td>${s.colour || '—'}</td>
+      <td>${s.clarity || '—'}</td>
+      <td>${s.lab || '—'}</td>
+      <td>${s.cert || '—'}</td>
+      <td class="num">${money(s.price)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function exportCSV() {
+  if (!results.length) { alert('Run a search with at least one match before exporting.'); return; }
+  const esc = s => `"${String(s ?? '').replace(/"/g, '""')}"`;
+
+  const lines = [
+    ['Fairmind — diamond stock search results'],
+    ['Search run', new Date().toLocaleString('en-GB')],
+    [],
+    ['Supplier', 'Ref', 'Shape', 'Weight', 'Colour', 'Clarity', 'Lab', 'Cert', 'Price (GBP)']
+  ].map(row => row.map(esc).join(','));
+
+  results.forEach(s => lines.push([
+    s.source, s.ref, s.shapeCanonical, s.weight, s.colour, s.clarity, s.lab, s.cert, s.price
+  ].map(esc).join(',')));
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `diamond-search-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+
+</body>
+</html>
