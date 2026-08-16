@@ -42,21 +42,15 @@
 
     <div class="lead">
       <p class="muted">
-        Load a supplier's loose diamond stock list and search it against criteria you set.
-        Nothing is uploaded anywhere — the file is read by your browser only, and is gone
-        the moment you close or reload this page. This is a search of stock on offer, not a
-        valuation.
+        Load any Excel or CSV files that you have, then set your search criteria below.
+        Nothing is uploaded — files are read in your browser only.
       </p>
     </div>
 
     <!-- ===== 1. LOAD STOCK LISTS ===== -->
     <section class="card">
       <p class="section-heading">1 &nbsp;Load stock lists</p>
-      <p class="muted" style="margin-bottom:1.5rem">
-        Each supplier lays its list out differently, so there is a separate box per
-        supplier below. Load as many as you have — a search checks all loaded lists
-        together. Accepts the supplier's own .xlsx export, or a .csv.
-      </p>
+      <p class="muted" style="margin-bottom:1.5rem">Load as many supplier lists as you have. Accepts .xlsx or .csv.</p>
 
       <div class="grid">
         <div>
@@ -75,21 +69,12 @@
           <p class="muted" id="status-weissbart" style="margin-top:.5rem">No file loaded.</p>
         </div>
       </div>
-
-      <p class="muted" style="margin-top:1.5rem">
-        Diamonds For Today is not included yet — their list is only available as a PDF with
-        text that doesn't extract reliably, so it isn't safe to parse automatically. Ask
-        Diamonds For Today for a CSV or Excel export if you need their stock searched too.
-      </p>
     </section>
 
     <!-- ===== 2. SEARCH CRITERIA ===== -->
     <section class="card">
       <p class="section-heading">2 &nbsp;Search criteria</p>
-      <p class="muted" style="margin-bottom:1.5rem">
-        Leave anything you don't need blank — a search only applies the criteria you fill
-        in, and ignores the rest.
-      </p>
+      <p class="muted" style="margin-bottom:1.5rem">Please fill in your search criteria.</p>
 
       <div class="grid">
         <div>
@@ -111,30 +96,22 @@
         <div><label for="cWeightMin">Weight from (ct)</label><input id="cWeightMin" type="number" step="0.01" placeholder="1.00"></div>
         <div><label for="cWeightMax">Weight to (ct)</label><input id="cWeightMax" type="number" step="0.01" placeholder="1.50"></div>
         <div>
-          <label for="cColourMin">Colour, best</label>
-          <select id="cColourMin"><option value="">Any</option></select>
+          <label for="colourBtn">Colour</label>
+          <div class="dropdown-check" id="colourDropdown">
+            <button type="button" class="dropdown-check-btn" id="colourBtn" onclick="toggleDropdown('colourDropdown')">Any</button>
+            <div class="dropdown-check-panel"></div>
+          </div>
         </div>
         <div>
-          <label for="cColourMax">Colour, worst</label>
-          <select id="cColourMax"><option value="">Any</option></select>
-        </div>
-        <div>
-          <label for="cClarityMin">Clarity, best</label>
-          <select id="cClarityMin"><option value="">Any</option></select>
-        </div>
-        <div>
-          <label for="cClarityMax">Clarity, worst</label>
-          <select id="cClarityMax"><option value="">Any</option></select>
+          <label for="clarityBtn">Clarity</label>
+          <div class="dropdown-check" id="clarityDropdown">
+            <button type="button" class="dropdown-check-btn" id="clarityBtn" onclick="toggleDropdown('clarityDropdown')">Any</button>
+            <div class="dropdown-check-panel"></div>
+          </div>
         </div>
         <div><label for="cPriceMin">Price from (£)</label><input id="cPriceMin" type="number" step="1" placeholder="500"></div>
         <div><label for="cPriceMax">Price to (£)</label><input id="cPriceMax" type="number" step="1" placeholder="5000"></div>
       </div>
-
-      <p class="muted" style="margin-top:1.25rem">
-        A colour or clarity range only matches stones on the standard grading scale.
-        Fancy-coloured stones (e.g. "Fancy Light Yellow") sit outside the D–Z scale, so a
-        colour range will correctly exclude them — leave colour blank to include them.
-      </p>
 
       <div class="actions">
         <button class="btn" onclick="runSearch()">Search loaded stones</button>
@@ -145,7 +122,7 @@
     <!-- ===== 3. RESULTS ===== -->
     <section class="card">
       <p class="section-heading">3 &nbsp;Results</p>
-      <div id="resultsSummary" class="muted" style="margin-bottom:1rem">Load a stock list and run a search to see results.</div>
+      <div id="resultsSummary" class="muted" style="margin-bottom:1rem"></div>
 
       <table>
         <thead>
@@ -161,12 +138,6 @@
 
       <div class="actions">
         <button class="btn outline" onclick="exportCSV()">Download results (CSV)</button>
-      </div>
-
-      <div class="caveat">
-        These are stones currently offered by the supplier at the time the list was
-        produced, not a valuation of any stone you already hold. Check the source list's
-        date and the stone's own certificate before relying on any figure here.
       </div>
     </section>
 
@@ -231,21 +202,23 @@ const SUPPLIERS = [
    unrecognised shape isn't dropped, it just won't match a shape filter. */
 const SHAPE_ALIASES = {
   'round': 'Round', 'round brilliant': 'Round', 'rbc': 'Round', 'br': 'Round', 'rb': 'Round',
-  'princess': 'Princess', 'pc': 'Princess',
-  'emerald': 'Emerald', 'emerald cut': 'Emerald', 'ec': 'Emerald',
-  'asscher': 'Asscher', 'ac': 'Asscher',
+  'princess': 'Princess', 'pc': 'Princess', 'pr': 'Princess',
+  'emerald': 'Emerald', 'emerald cut': 'Emerald', 'ec': 'Emerald', 'em': 'Emerald',
+  'asscher': 'Asscher', 'ac': 'Asscher', 'as': 'Asscher',
   'oval': 'Oval', 'ov': 'Oval',
   'radiant': 'Radiant', 'rad': 'Radiant',
   'pear': 'Pear', 'pear cut': 'Pear', 'ps': 'Pear',
   'heart': 'Heart', 'heart cut': 'Heart', 'hs': 'Heart',
   'marquise': 'Marquise', 'mq': 'Marquise',
-  'cushion': 'Cushion', 'cushion cut': 'Cushion', 'cu': 'Cushion'
+  'cushion': 'Cushion', 'cushion cut': 'Cushion', 'cu': 'Cushion', 'cb': 'Cushion',
+  'shield': 'Shield'
 };
 
-/* Standard grading scales, best to worst. A stone's colour/clarity is
-   compared by its position (index) in these arrays. Anything not found in
-   the scale (a fancy colour, an unrecognised clarity code) is treated as
-   "can't be judged against a range" — see matches() below. */
+/* Standard grading scales, used to fill the Colour and Clarity checkbox
+   dropdowns. A stone only matches a colour/clarity filter if its own grade
+   is one of the boxes ticked — fancy colours and other codes outside these
+   lists simply aren't offered as an option, so they won't match either
+   filter but are still shown when it's left on "Any". */
 const COLOUR_SCALE = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 const CLARITY_SCALE = ['FL','IF','VVS1','VVS2','VS1','VS2','SI1','SI2','I1','I2','I3'];
 
@@ -263,20 +236,51 @@ let results = [];          // the current search results, kept for CSV export
     const o = document.createElement('option'); o.textContent = s; shapeSel.appendChild(o);
   });
 
-  COLOUR_SCALE.forEach((c, i) => {
-    ['cColourMin', 'cColourMax'].forEach(id => {
-      const o = document.createElement('option'); o.value = i; o.textContent = c;
-      document.getElementById(id).appendChild(o);
-    });
-  });
-
-  CLARITY_SCALE.forEach((c, i) => {
-    ['cClarityMin', 'cClarityMax'].forEach(id => {
-      const o = document.createElement('option'); o.value = i; o.textContent = c;
-      document.getElementById(id).appendChild(o);
-    });
-  });
+  buildCheckboxDropdown('colourDropdown', 'colourBtn', COLOUR_SCALE);
+  buildCheckboxDropdown('clarityDropdown', 'clarityBtn', CLARITY_SCALE);
 })();
+
+/* --- Colour and Clarity checkbox dropdowns --------------------------------
+   A small button that toggles a panel of checkboxes below it. Built once
+   from a list of grades (buildCheckboxDropdown), read back at search time
+   (checkedValues), and closed by clicking its own button again or anywhere
+   else on the page (the document click listener at the bottom of this
+   file). Kept generic so the same code drives both Colour and Clarity. */
+function buildCheckboxDropdown(containerId, buttonId, values) {
+  const panel = document.querySelector(`#${containerId} .dropdown-check-panel`);
+  values.forEach(v => {
+    const label = document.createElement('label');
+    label.className = 'dropdown-check-option';
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.value = v;
+    box.onchange = () => updateDropdownButton(containerId, buttonId);
+    label.append(box, document.createTextNode(' ' + v));
+    panel.appendChild(label);
+  });
+}
+
+function checkedValues(containerId) {
+  return [...document.querySelectorAll(`#${containerId} input:checked`)].map(box => box.value);
+}
+
+function updateDropdownButton(containerId, buttonId) {
+  const values = checkedValues(containerId);
+  document.getElementById(buttonId).textContent = values.length ? values.join(', ') : 'Any';
+}
+
+function toggleDropdown(containerId) {
+  const panel = document.querySelector(`#${containerId} .dropdown-check-panel`);
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.dropdown-check-panel.open').forEach(p => p.classList.remove('open'));
+  if (!isOpen) panel.classList.add('open');
+}
+
+document.addEventListener('click', e => {
+  document.querySelectorAll('.dropdown-check').forEach(d => {
+    if (!d.contains(e.target)) d.querySelector('.dropdown-check-panel').classList.remove('open');
+  });
+});
 
 /* --- reading the file ----------------------------------------------------
    .xlsx files are read as binary and handed to the SheetJS library.
@@ -389,9 +393,7 @@ function parseWorkbook(rows, config) {
       shapeCanonical: SHAPE_ALIASES[rawShape.toLowerCase()] || rawShape,
       weight: weight,
       colour: rawColour,
-      colourIndex: COLOUR_SCALE.indexOf(rawColour.toUpperCase()),
       clarity: rawClarity,
-      clarityIndex: CLARITY_SCALE.indexOf(rawClarity),
       lab: lab,
       cert: cert,
       price: parseMoney(get('price'))
@@ -419,17 +421,8 @@ function matches(stone, c) {
   if (c.priceMin != null && stone.price < c.priceMin) return false;
   if (c.priceMax != null && stone.price > c.priceMax) return false;
 
-  if (c.colourMin != null || c.colourMax != null) {
-    if (stone.colourIndex === -1) return false; // fancy/unrecognised colour, can't rank it
-    if (c.colourMin != null && stone.colourIndex < c.colourMin) return false;
-    if (c.colourMax != null && stone.colourIndex > c.colourMax) return false;
-  }
-
-  if (c.clarityMin != null || c.clarityMax != null) {
-    if (stone.clarityIndex === -1) return false;
-    if (c.clarityMin != null && stone.clarityIndex < c.clarityMin) return false;
-    if (c.clarityMax != null && stone.clarityIndex > c.clarityMax) return false;
-  }
+  if (c.colours.length && !c.colours.includes(stone.colour.toUpperCase())) return false;
+  if (c.clarities.length && !c.clarities.includes(stone.clarity)) return false;
 
   return true;
 }
@@ -437,13 +430,12 @@ function matches(stone, c) {
 function criteria() {
   const val = id => document.getElementById(id).value;
   const num = id => { const v = parseFloat(val(id)); return isFinite(v) ? v : null; };
-  const idx = id => { const v = val(id); return v === '' ? null : parseInt(v, 10); };
   return {
     shape: val('cShape') || null,
     lab: val('cLab') || null,
     weightMin: num('cWeightMin'), weightMax: num('cWeightMax'),
-    colourMin: idx('cColourMin'), colourMax: idx('cColourMax'),
-    clarityMin: idx('cClarityMin'), clarityMax: idx('cClarityMax'),
+    colours: checkedValues('colourDropdown'),
+    clarities: checkedValues('clarityDropdown'),
     priceMin: num('cPriceMin'), priceMax: num('cPriceMax')
   };
 }

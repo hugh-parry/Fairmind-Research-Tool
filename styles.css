@@ -327,6 +327,45 @@ tr.outlier td { background: #fdf4f5; }
   color: var(--ink-soft);
 }
 
+/* --- checkbox dropdown (diamond tool: colour & clarity, multi-select) ---- */
+.dropdown-check { position: relative; }
+.dropdown-check-btn {
+  width: 100%;
+  text-align: left;
+  padding: .6rem .7rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: .92rem;
+  font-weight: 300;
+  cursor: pointer;
+}
+.dropdown-check-btn:focus { outline: 2px solid var(--pink); outline-offset: 1px; }
+.dropdown-check-panel {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+}
+.dropdown-check-panel.open { display: block; }
+.dropdown-check-option {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .7rem;
+  font-size: .88rem;
+  cursor: pointer;
+}
+.dropdown-check-option:hover { background: var(--wash); }
+
 /* --- market segments (jewellery tool) ------------------------------------- */
 .segment { margin-bottom: 2.5rem; }
 .segment:last-child { margin-bottom: 0; }

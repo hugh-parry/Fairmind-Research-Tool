@@ -101,11 +101,11 @@ data would be worse than not supporting the source at all. If Diamonds For Today
 provide a CSV or Excel export instead, add them as a fourth `SUPPLIERS` entry the same way
 as the other three; don't attempt automated PDF parsing for this source.
 
-**Colour and clarity are matched on their position in a graded scale**
-(`COLOUR_SCALE` / `CLARITY_SCALE`, best to worst), not on exact text, so a valuer can ask
-for a range (e.g. "G or better"). A fancy colour or an unrecognised clarity code has no
-position on that scale, so it's excluded from a colour/clarity range filter rather than
-guessed at — it will still appear in results with no range filter applied.
+**Colour and clarity are checkbox-dropdown multi-selects**, built from `COLOUR_SCALE` /
+`CLARITY_SCALE`, not text inputs — a valuer ticks the grades they'll accept (e.g. D, E,
+F) and a stone matches if its own grade is one of those ticked. Fancy colours aren't in
+the list, so they're simply not selectable, but still appear in results whenever the
+colour filter is left on "Any".
 
 ## Styling
 
