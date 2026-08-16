@@ -14,8 +14,13 @@ A set of open-source research tools for jewellery and watch valuers:
 **This is a starting point for research, not a valuation.** The tool never produces a
 value, and nothing it outputs goes into a client document unaltered. The valuer's own
 appraisal — inspection, condition, provenance, purpose of valuation — happens separately
-and afterwards. Keep this framing in all copy. Avoid the word "valuation" for anything
-the tool itself does.
+and afterwards.
+
+State this explicitly on the homepage (`index.html`) — that's the one place every valuer
+is guaranteed to land before opening any tool. Individual tool pages don't need to repeat
+the caveat in their own copy; saying it once, prominently, beats saying it quietly on
+every page. Still never describe what a tool itself produces as a "valuation" anywhere —
+that's a separate, permanent rule, independent of where the caveat sentence lives.
 
 ## Hard constraint: no automated fetching
 
