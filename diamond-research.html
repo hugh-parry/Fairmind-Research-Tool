@@ -482,7 +482,7 @@ function exportCSV() {
   const esc = s => `"${String(s ?? '').replace(/"/g, '""')}"`;
 
   const lines = [
-    ['Fairmind — diamond stock search results'],
+    ['Fairmind — diamond stock list search results'],
     ['Search run', new Date().toLocaleString('en-GB')],
     [],
     ['Supplier', 'Ref', 'Shape', 'Weight', 'Colour', 'Clarity', 'Lab', 'Cert', 'Price (GBP)']
