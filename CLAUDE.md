@@ -8,7 +8,7 @@ Static site, hosted on GitHub Pages at `hugh-parry.github.io/Fairmind-Research-T
 A set of open-source research tools for jewellery and watch valuers:
 - watch market research — current asking prices for a watch, from live listings
 - jewellery market research — auction results and retail listings for a piece
-- diamond stock search — search a supplier's own loose-diamond stock list against
+- diamond stock list search — search a supplier's own loose-diamond stock list against
   criteria the valuer sets
 
 **This is a starting point for research, not a valuation.** The tool never produces a
@@ -43,7 +43,7 @@ official Browse API; adding that is permitted but needs an API key and is not ye
 - `index.html` — homepage, lists available tools
 - `watch-research.html` — watch tool (live retail listings only)
 - `jewellery-research.html` — jewellery tool (auction results + retail listings)
-- `diamond-research.html` — diamond stock search tool (see dedicated section below)
+- `diamond-research.html` — diamond stock list search tool (see dedicated section below)
 - `vendor/xlsx.mini.min.js` — vendored copy of SheetJS, used only by the diamond tool
 - `styles.css` — shared stylesheet for all pages
 - `CLAUDE.md` — this file
@@ -146,7 +146,7 @@ live site. `--blue`, `--pink` and `--font` still need verifying.
 - [ ] Confirm `--blue`, `--pink` and `--font` against the live Fairmind site
 - [ ] Review the outlier rule with Annabell. Currently a flat 25% from the median
       (`OUTLIER_THRESHOLD`), which is a blunt instrument and hasn't been agreed.
-- [x] Diamond stock search tool built (`diamond-research.html`). Column mappings for
+- [x] Diamond stock list search tool built (`diamond-research.html`). Column mappings for
       Gemex, Josyfon and Weissbart GIA are based on one real sample file per supplier —
       re-check against a second sample from each before relying on it for real work, in
       case a supplier's layout varies file to file.

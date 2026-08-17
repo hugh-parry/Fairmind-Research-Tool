@@ -359,12 +359,19 @@ tr.outlier td { background: #fdf4f5; }
 .dropdown-check-option {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: .35rem;
   padding: .5rem .7rem;
   font-size: .88rem;
   cursor: pointer;
 }
 .dropdown-check-option:hover { background: var(--wash); }
+/* The site-wide "input, select { width: 100% }" rule above is meant for text
+   fields and dropdowns — without this, it also stretches these checkboxes to
+   fill the row, shoving the label off to the right of the visible box. */
+.dropdown-check-option input[type="checkbox"] {
+  width: auto;
+  flex: none;
+}
 
 /* --- market segments (jewellery tool) ------------------------------------- */
 .segment { margin-bottom: 2.5rem; }
